@@ -1,9 +1,9 @@
 ﻿namespace Edi.View.Pane
 {
   using System.Linq;
-  using AvalonDock.Layout;
+  using Xceed.Wpf.AvalonDock.Layout;
 
-  class LayoutInitializer : ILayoutUpdateStrategy
+  public class LayoutInitializer : ILayoutUpdateStrategy
   {
     public bool BeforeInsertAnchorable(LayoutRoot layout, LayoutAnchorable anchorableToShow, ILayoutContainer destinationContainer)
     {

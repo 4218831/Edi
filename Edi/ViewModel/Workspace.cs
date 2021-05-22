@@ -9,7 +9,7 @@
   using Microsoft.Win32;
   using System.IO;
   using System.Windows;
-  using AvalonDock.Layout;
+  using Xceed.Wpf.AvalonDock.Layout;
   using Edi.ViewModel.Base;
   using Edi.Command;
   using SimpleControls.MRU.ViewModel;

@@ -1,13 +1,13 @@
 ﻿namespace Edi.View
 {
-  using System.IO;
-  using System.Windows;
-  using System.Windows.Input;
-  using AvalonDock.Layout.Serialization;
-  using Edi.Command;
-  using Edi.ViewModel;
+    using System.IO;
+    using System.Windows;
+    using System.Windows.Input;
+    using Xceed.Wpf.AvalonDock.Layout.Serialization;
+    using Edi.Command;
+    using Edi.ViewModel;
 
-  /// <summary>
+    /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
@@ -20,7 +20,6 @@
 
             Workspace.This.InitCommandBinding(this);
         }
-
 
         #region LoadLayoutCommand
         RelayCommand _loadLayoutCommand = null;
@@ -98,7 +97,5 @@
             dockManager.Layout.ConsoleDump(0);
 #endif
         }
-
-
     }
 }

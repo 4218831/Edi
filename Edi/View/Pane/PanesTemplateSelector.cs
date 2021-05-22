@@ -1,15 +1,11 @@
 ﻿namespace Edi.View.Pane
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
-  using System.Windows.Controls;
-  using System.Windows;
-  using AvalonDock.Layout;
-  using Edi.ViewModel;
+    using System.Windows.Controls;
+    using System.Windows;
+    using Xceed.Wpf.AvalonDock.Layout;
+    using Edi.ViewModel;
 
-  class PanesTemplateSelector : DataTemplateSelector
+    class PanesTemplateSelector : DataTemplateSelector
     {
         public PanesTemplateSelector()
         {
