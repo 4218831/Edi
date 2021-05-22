@@ -168,6 +168,67 @@
 
     #endregion
 
+    #region ADLayout
+    private AvalonDockLayoutViewModel mAVLayout = null;
+
+    /// <summary>
+    /// Expose command to load/save AvalonDock layout on application startup and shut-down.
+    /// </summary>
+    public AvalonDockLayoutViewModel ADLayout
+    {
+      get
+      {
+        if (this.mAVLayout == null)
+          this.mAVLayout = new AvalonDockLayoutViewModel();
+
+        return this.mAVLayout;
+      }
+    }
+
+    public static string LayoutFileName
+    {
+      get
+      {
+        return "Layout.config";
+      }
+    }
+    #endregion ADLayout
+
+    #region Application Properties
+    /// <summary>
+    /// Get a path to the directory where the application
+    /// can persist/load user data on session exit and re-start.
+    /// </summary>
+    public static string DirAppData
+    {
+      get
+      {
+        string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
+                                         System.IO.Path.DirectorySeparatorChar + Workspace.Company;
+
+        try
+        {
+          if (System.IO.Directory.Exists(dirPath) == false)
+            System.IO.Directory.CreateDirectory(dirPath);
+        }
+        catch
+        {
+        }
+
+        return dirPath;
+      }
+    }
+
+    public static string Company
+    {
+      get
+      {
+        return "EdiDemo";
+      }
+    }
+    #endregion Application Properties
+
+    #region close save file handling methods
     internal void Close(FileViewModel fileToClose)
     {
       if (fileToClose.IsDirty)
@@ -196,6 +257,7 @@
       File.WriteAllText(fileToSave.FilePath, fileToSave.Document.Text);
       ActiveDocument.IsDirty = false;
     }
+    #endregion close save file handling methods
 
     #region ToggleEditorOptionCommand
     RelayCommand _toggleEditorOptionCommand = null;

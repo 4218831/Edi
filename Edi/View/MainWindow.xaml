@@ -4,6 +4,7 @@
         xmlns:avalonDock="http://avalondock.codeplex.com"
         xmlns:shell="clr-namespace:Microsoft.Windows.Shell;assembly=AvalonDock"
 
+        xmlns:AVBehav="clr-namespace:Edi.View.Behavior"
         xmlns:conv="clr-namespace:Edi.Converter"
         xmlns:pane="clr-namespace:Edi.View.Pane"
         xmlns:vm="clr-namespace:Edi.ViewModel"
@@ -38,11 +39,6 @@
       </MenuItem>
       <MenuItem Header="_Tools">
         <MenuItem Header="Properties" IsChecked="{Binding FileStats.IsVisible, Mode=TwoWay}" IsCheckable="True"/>
-      </MenuItem>
-      <MenuItem Header="_Layout">
-        <MenuItem Header="Load" Command="{Binding LoadLayoutCommand, ElementName=mainWindow}"/>
-        <MenuItem Header="Save" Command="{Binding SaveLayoutCommand, ElementName=mainWindow}"/>
-        <MenuItem Header="Dump to Console" Click="OnDumpToConsole"/>
       </MenuItem>
     </Menu>
     <!--AnchorablesSource="{Binding Tools}" DocumentsSource="{Binding Files}"-->
@@ -118,11 +114,14 @@
 
     </ToolBarTray>
 
-      <avalonDock:DockingManager x:Name="dockManager" 
-                                   AnchorablesSource="{Binding Tools}" 
-                                   DocumentsSource="{Binding Files}"
-                                   ActiveContent="{Binding ActiveDocument, Mode=TwoWay, Converter={StaticResource ActiveDocumentConverter}}"
-                                   Grid.Row="2">
+      <avalonDock:DockingManager AnchorablesSource="{Binding Tools}" 
+                                 DocumentsSource="{Binding Files}"
+                                 ActiveContent="{Binding ActiveDocument, Mode=TwoWay, Converter={StaticResource ActiveDocumentConverter}}"
+                                 
+                                 AVBehav:AvalonDockLayoutSerializer.LoadLayoutCommand="{Binding ADLayout.LoadLayoutCommand}"
+                                 AVBehav:AvalonDockLayoutSerializer.SaveLayoutCommand="{Binding ADLayout.SaveLayoutCommand}"
+
+                                 Grid.Row="2">
       <avalonDock:DockingManager.DocumentHeaderTemplate>
         <DataTemplate>
           <StackPanel Orientation="Horizontal">

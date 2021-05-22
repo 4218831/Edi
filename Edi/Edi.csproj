@@ -76,8 +76,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converter\ActiveDocumentConverter.cs" />
+    <Compile Include="ViewModel\AvalonDockLayoutViewModel.cs" />
     <Compile Include="ViewModel\FileStatsViewModel.cs" />
     <Compile Include="ViewModel\FileViewModel.cs" />
+    <Compile Include="View\Behavior\AvalonDockLayoutSerializer.cs" />
     <Compile Include="View\Pane\LayoutInitializer.cs" />
     <Compile Include="View\Pane\PanesStyleSelector.cs" />
     <Compile Include="View\Pane\PanesTemplateSelector.cs" />
