@@ -1,12 +1,12 @@
 ﻿namespace Edi.ViewModel
 {
   using System.Windows.Media;
-  using GalaSoft.MvvmLight;
+  using Microsoft.Practices.Prism.ViewModel;
 
   /// <summary>
   /// Class to manage tool window content.
   /// </summary>
-  public class PaneViewModel : ViewModelBase
+  public class PaneViewModel : NotificationObject
   {
     public PaneViewModel()
     { }

@@ -16,9 +16,6 @@
         xmlns:sysWindows="clr-namespace:System.Windows;assembly=PresentationCore"
 
         xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
-
-        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-        xmlns:command="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras.WPF4"
         
         x:Name="mainWindow"
         Title="MainWindow" Height="650" Width="825">

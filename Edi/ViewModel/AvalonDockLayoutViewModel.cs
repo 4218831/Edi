@@ -7,13 +7,12 @@
   using System.Windows;
   using System.Windows.Input;
   using System.Windows.Threading;
-  using System.Xml;
+  using Edi.Events;
   using Edi.Interfaces;
-  using GalaSoft.MvvmLight.Command;
-  using GalaSoft.MvvmLight.Messaging;
   using ICSharpCode.AvalonEdit.Utils;
+  using Microsoft.Practices.Composite.Events;
+  using Microsoft.Practices.Prism.Commands;
   using Xceed.Wpf.AvalonDock;
-  using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
   /// <summary>
   /// Class implements a viewmodel to support the
@@ -27,11 +26,13 @@
     #region fields
     private const string LayoutFileName = "Layout.config";
 
-    private RelayCommand mLoadWorkspaceLayoutFromStringCommand = null;
-    private RelayCommand mSaveWorkspaceLayoutToStringCommand = null;
+    readonly IEventAggregator _aggregator = new EventAggregator();
 
-    private RelayCommand<object> mLoadLayoutCommand = null;
-    private RelayCommand<object> mSaveLayoutCommand = null;
+    private DelegateCommand mLoadWorkspaceLayoutFromStringCommand = null;
+    private DelegateCommand mSaveWorkspaceLayoutToStringCommand = null;
+
+    private DelegateCommand<object> mLoadLayoutCommand = null;
+    private DelegateCommand<object> mSaveLayoutCommand = null;
 
     // The XML workspace layout string is stored in this field
     private string current_layout;
@@ -45,7 +46,7 @@
     /// are required for access to parent viewmodel.
     /// </summary>
     /// <param name="parent"></param>
-    public AvalonDockLayoutViewModel(ILayoutViewModelParent parent)
+    public AvalonDockLayoutViewModel(ILayoutViewModelParent parent) : this()
     {
       this.mParent = parent;
     }
@@ -55,7 +56,7 @@
     /// </summary>
     protected AvalonDockLayoutViewModel()
     {
-
+      this.current_layout = null;
     }
     #endregion
 
@@ -70,8 +71,13 @@
       {
         // Save layout command can be executed at any time since there always is a layout that can be saved...
         if (this.mSaveWorkspaceLayoutToStringCommand == null)
-          this.mSaveWorkspaceLayoutToStringCommand = new RelayCommand(this.SaveWorkspaceLayout_Executed,
-                                                                      () => this.mParent.IsBusy == false);
+        {
+          this.mSaveWorkspaceLayoutToStringCommand =
+             new DelegateCommand(this.SaveWorkspaceLayout_Executed,
+                                 () => this.mParent.IsBusy == false);
+
+          CommandManager.RequerySuggested += (s, e) => this.mSaveWorkspaceLayoutToStringCommand.RaiseCanExecuteChanged();
+        }
 
         return this.mSaveWorkspaceLayoutToStringCommand;
       }
@@ -86,9 +92,14 @@
       {
         // Load layout command is not enabled unless the layout string is set.
         if (this.mLoadWorkspaceLayoutFromStringCommand == null)
-          this.mLoadWorkspaceLayoutFromStringCommand = new RelayCommand(this.LoadWorkspaceLayout_Executed,
-                                                                       () => this.mParent.IsBusy == false &&
-                                                                      string.IsNullOrEmpty(this.current_layout) == false);
+        {
+          this.mLoadWorkspaceLayoutFromStringCommand = new DelegateCommand(this.LoadWorkspaceLayout_Executed,
+                                                                           () =>
+                                                                           this.mParent.IsBusy == false &&
+                                                                           string.IsNullOrEmpty(this.current_layout) == false);
+
+          CommandManager.RequerySuggested += (s, e) => this.mLoadWorkspaceLayoutFromStringCommand.RaiseCanExecuteChanged();
+        }
 
         return this.mLoadWorkspaceLayoutFromStringCommand;
       }
@@ -111,7 +122,7 @@
       {
         if (this.mLoadLayoutCommand == null)
         {
-          this.mLoadLayoutCommand = new RelayCommand<object>((p) =>
+          this.mLoadLayoutCommand = new DelegateCommand<object>((p) =>
           {
             DockingManager docManager = p as DockingManager;
 
@@ -153,7 +164,7 @@
       {
         if (this.mSaveLayoutCommand == null)
         {
-          this.mSaveLayoutCommand = new RelayCommand<object>((p) =>
+          this.mSaveLayoutCommand = new DelegateCommand<object>((p) =>
           {
             string xmlLayout = p as string;
 
@@ -178,19 +189,12 @@
     /// </summary>
     private void SaveWorkspaceLayout_Executed()
     {
-      // Sends a GetWorkspaceLayout message to registered recipients. The message will reach all recipients
-      // that registered for this message type using one of the Register methods.
-      Messenger.Default.Send(new NotificationMessageAction<string>(
-                                    Notifications.GetWorkspaceLayout,
-                                    (result) =>
-                                    {
-                                      this.mParent.IsBusy = true;
-                                      CommandManager.InvalidateRequerySuggested();
+      string xmlLayout = string.Empty;
 
-                                      this.current_layout = result;
-                                      this.mParent.IsBusy = false;
-                                    })
-                             );
+      SaveLayoutEventArgs s = new SaveLayoutEventArgs();
+      SynchronousEvent<SaveLayoutEventArgs>.Instance.Publish(s);
+
+      this.current_layout = s.XmlLayout;
     }
 
     /// <summary>
@@ -205,7 +209,9 @@
 
       // Sends a LoadWorkspaceLayout message to registered recipients. The message will reach all recipients
       // that registered for this message type using one of the Register methods.
-      Messenger.Default.Send(new NotificationMessage<string>(current_layout, Notifications.LoadWorkspaceLayout));
+      // Messenger.Default.Send(new NotificationMessage<string>(current_layout, Notifications.LoadWorkspaceLayout));
+
+      LoadLayoutEvent.Instance.Publish(current_layout);
     }
     #endregion Workspace Managment Methods
 
@@ -269,7 +275,7 @@
           {
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-              Messenger.Default.Send(new NotificationMessage<string>(ant.Result, Notifications.LoadWorkspaceLayout));
+              LoadLayoutEvent.Instance.Publish(ant.Result);
             }),
             DispatcherPriority.Background);
           }

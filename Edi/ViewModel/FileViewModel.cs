@@ -4,10 +4,10 @@
   using System.Text;
   using System.Windows.Input;
   using System.Windows.Media;
-  using GalaSoft.MvvmLight.Command;
   using ICSharpCode.AvalonEdit.Document;
   using ICSharpCode.AvalonEdit.Highlighting;
   using ICSharpCode.AvalonEdit.Utils;
+  using Microsoft.Practices.Prism.Commands;
 
   /// <summary>
   /// Class to manage viewmodel properties and methods for a text (file) editor.
@@ -277,14 +277,14 @@
     #endregion TextEditorOptions
 
     #region SaveCommand
-    RelayCommand<object> _saveCommand = null;
+    DelegateCommand<object> _saveCommand = null;
     public ICommand SaveCommand
     {
       get
       {
         if (_saveCommand == null)
         {
-          _saveCommand = new RelayCommand<object>((p) => OnSave(p), (p) => CanSave(p));
+          _saveCommand = new DelegateCommand<object>((p) => OnSave(p), (p) => CanSave(p));
         }
 
         return _saveCommand;
@@ -304,14 +304,14 @@
     #endregion
 
     #region SaveAsCommand
-    RelayCommand<object> _saveAsCommand = null;
+    DelegateCommand<object> _saveAsCommand = null;
     public ICommand SaveAsCommand
     {
       get
       {
         if (_saveAsCommand == null)
         {
-          _saveAsCommand = new RelayCommand<object>((p) => OnSaveAs(p), (p) => CanSaveAs(p));
+          _saveAsCommand = new DelegateCommand<object>((p) => OnSaveAs(p), (p) => CanSaveAs(p));
         }
 
         return _saveAsCommand;
@@ -331,14 +331,14 @@
     #endregion
 
     #region CloseCommand
-    RelayCommand<object> _closeCommand = null;
+    DelegateCommand<object> _closeCommand = null;
     public ICommand CloseCommand
     {
       get
       {
         if (_closeCommand == null)
         {
-          _closeCommand = new RelayCommand<object>((p) => OnClose(), (p) => CanClose());
+          _closeCommand = new DelegateCommand<object>((p) => OnClose(), (p) => CanClose());
         }
 
         return _closeCommand;

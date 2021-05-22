@@ -2,9 +2,9 @@
 {
   using System.IO;
   using System.Windows;
+  using Edi.Events;
   using Edi.ViewModel;
-  using GalaSoft.MvvmLight;
-  using GalaSoft.MvvmLight.Messaging;
+  using Microsoft.Practices.Prism.ViewModel;
   using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
   /// <summary>
@@ -19,56 +19,48 @@
 
       this.DataContext = ApplicationViewModel.This;
 
-      // Register this private method to receive all MVVM Light notifications of the NotificationMessageAction<string> type
-      Messenger.Default.Register<NotificationMessageAction<string>>(this, notication_message_action_recieved);
+      // Register this private methods to receive PRISM event notifications
+      LoadLayoutEvent.Instance.Subscribe(OnLoadLayout);
 
-      // Register this private method to receive all MVVM Light notifications of the NotificationMessage<string> type
-      Messenger.Default.Register<NotificationMessage<string>>(this, notification_message_string_received);
+      SynchronousEvent<SaveLayoutEventArgs>.Instance.Subscribe(OnSaveLayout);
     }
     #endregion constructor
 
     #region Workspace Layout Management
     /// <summary>
-    /// Is executed when MVVM Light sends a <seealso cref="NotificationMessageAction"/> notification
+    /// Is executed when PRISM sends a <seealso cref="SynchronousEvent"/> notification
     /// that was initiallized by a third party (viewmodel).
     /// </summary>
-    /// <param name="message"></param>
-    private void notication_message_action_recieved(NotificationMessageAction<string> message)
+    /// <param name="param">Can be used to return a result of this event</param>
+    private void OnSaveLayout(SaveLayoutEventArgs param)
     {
-      // Is this a save workspace layout notification?
-      if (message.Notification == Notifications.GetWorkspaceLayout)
+      string xmlLayoutString = string.Empty;
+
+      using (StringWriter fs = new StringWriter())
       {
-        string xmlLayoutString = string.Empty;
+        XmlLayoutSerializer xmlLayout = new XmlLayoutSerializer(this.dockManager);
 
-        using (StringWriter fs = new StringWriter())
-        {
-          XmlLayoutSerializer xmlLayout = new XmlLayoutSerializer(this.dockManager);
+        xmlLayout.Serialize(fs);
 
-          xmlLayout.Serialize(fs);
-
-          xmlLayoutString = fs.ToString();
-        }
-
-        message.Execute(xmlLayoutString);
+        xmlLayoutString = fs.ToString();
       }
+
+      param.XmlLayout = xmlLayoutString;
     }
 
     /// <summary>
-    /// Is executed when MVVM Light sends a <seealso cref="NotificationMessage"/> notification
-    /// via a sender which could be a viewmodel that wants to receive the load the WorkspaceLayout.
+    /// Is executed when PRISM sends a Xml layout string notification
+    /// via a sender which could be a viewmodel that wants to receive
+    /// the load the <seealso cref="LoadLayoutEvent"/>.
     /// </summary>
     /// <param name="message"></param>
-    private void notification_message_string_received(NotificationMessage<string> message)
+    private void OnLoadLayout(string message)
     {
-      // Is this a load workspace layout notification?
-      if (message.Notification == Notifications.LoadWorkspaceLayout)
-      {
-        StringReader sr = new StringReader(message.Content);
+      StringReader sr = new StringReader(message);
 
-        var layoutSerializer = new XmlLayoutSerializer(dockManager);
-        layoutSerializer.LayoutSerializationCallback += UpdateLayout;
-        layoutSerializer.Deserialize(sr);
-      }
+      var layoutSerializer = new XmlLayoutSerializer(dockManager);
+      layoutSerializer.LayoutSerializationCallback += UpdateLayout;
+      layoutSerializer.Deserialize(sr);
     }
 
     /// <summary>
@@ -88,7 +80,7 @@
         return;
 
       // Get a matching viewmodel for that view via DataContext property of this view
-      ViewModelBase content_view_model = resolver.ContentViewModelFromID(args.Model.ContentId);
+      NotificationObject content_view_model = resolver.ContentViewModelFromID(args.Model.ContentId);
 
       if (content_view_model == null)
         args.Cancel = true;

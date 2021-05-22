@@ -1,6 +1,6 @@
 namespace Edi.Interfaces
 {
-  using GalaSoft.MvvmLight;
+  using Microsoft.Practices.Prism.ViewModel;
 
   /// <summary>
   /// Interface to resolve string id into a
@@ -8,6 +8,6 @@ namespace Edi.Interfaces
   /// </summary>
   public interface IViewModelResolver
   {
-    ViewModelBase ContentViewModelFromID(string content_id);
+    NotificationObject ContentViewModelFromID(string content_id);
   }
 }

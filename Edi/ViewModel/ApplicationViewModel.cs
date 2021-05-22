@@ -10,9 +10,9 @@
   using System.Windows.Threading;
   using Edi.Interfaces;
   using Edi.ViewModel.Base;
-  using GalaSoft.MvvmLight;
-  using GalaSoft.MvvmLight.Command;
   using ICSharpCode.AvalonEdit.Document;
+  using Microsoft.Practices.Prism.Commands;
+  using Microsoft.Practices.Prism.ViewModel;
   using Microsoft.Win32;
   using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
@@ -28,7 +28,7 @@
   /// <summary>
   /// This class manages the viewmodel properties and methods for the entire application.
   /// </summary>
-  public class ApplicationViewModel : ViewModelBase, IViewModelResolver, ILayoutViewModelParent
+  public class ApplicationViewModel : NotificationObject, IViewModelResolver, ILayoutViewModelParent
   {
     #region fields
     private static ApplicationViewModel _this = new ApplicationViewModel();
@@ -188,14 +188,14 @@
 
     #region commands
     #region OpenCommand
-    RelayCommand<object> _openCommand = null;
+    DelegateCommand<object> _openCommand = null;
     public ICommand OpenCommand
     {
       get
       {
         if (_openCommand == null)
         {
-          _openCommand = new RelayCommand<object>((p) => OnOpen(p), (p) => CanOpen(p));
+          _openCommand = new DelegateCommand<object>((p) => OnOpen(p), (p) => CanOpen(p));
         }
 
         return _openCommand;
@@ -235,14 +235,14 @@
     #endregion
 
     #region NewCommand
-    RelayCommand<object> _newCommand = null;
+    DelegateCommand<object> _newCommand = null;
     public ICommand NewCommand
     {
       get
       {
         if (_newCommand == null)
         {
-          _newCommand = new RelayCommand<object>((p) => OnNew(p), (p) => CanNew(p));
+          _newCommand = new DelegateCommand<object>((p) => OnNew(p), (p) => CanNew(p));
         }
 
         return _newCommand;
@@ -303,14 +303,14 @@
     #endregion close save file handling methods
 
     #region ToggleEditorOptionCommand
-    RelayCommand<object> _toggleEditorOptionCommand = null;
+    DelegateCommand<object> _toggleEditorOptionCommand = null;
     public ICommand ToggleEditorOptionCommand
     {
       get
       {
         if (this._toggleEditorOptionCommand == null)
         {
-          this._toggleEditorOptionCommand = new RelayCommand<object>((p) => OnToggleEditorOption(p),
+          this._toggleEditorOptionCommand = new DelegateCommand<object>((p) => OnToggleEditorOption(p),
                                                                      (p) => CanToggleEditorOption(p));
         }
 
@@ -376,7 +376,7 @@
     /// </summary>
     /// <param name="content_id"></param>
     /// <returns>viewmodel instance or null (if match was not succesful)</returns>
-    ViewModelBase Edi.Interfaces.IViewModelResolver.ContentViewModelFromID(string content_id)
+    NotificationObject Edi.Interfaces.IViewModelResolver.ContentViewModelFromID(string content_id)
     {
       // Query for a tool window and return it
       var anchorable_vm = this.Tools.FirstOrDefault(d => d.ContentId == content_id);
