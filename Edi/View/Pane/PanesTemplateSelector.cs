@@ -9,11 +9,11 @@
   using AvalonDock.Layout;
   using Edi.ViewModel;
 
-    class PanesTemplateSelector : DataTemplateSelector
+  class PanesTemplateSelector : DataTemplateSelector
     {
         public PanesTemplateSelector()
         {
-
+        
         }
 
 
@@ -21,6 +21,12 @@
         {
             get;
             set;
+        }
+
+        public DataTemplate RecentFilesViewTemplate
+        {
+          get;
+          set;
         }
 
         public DataTemplate FileStatsViewTemplate
@@ -38,6 +44,9 @@
 
             if (item is FileStatsViewModel)
                 return FileStatsViewTemplate;
+
+            if (item is RecentFilesViewModel)
+              return RecentFilesViewTemplate;
 
             return base.SelectTemplate(item, container);
         }

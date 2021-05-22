@@ -75,10 +75,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppCommand.cs" />
     <Compile Include="Converter\ActiveDocumentConverter.cs" />
     <Compile Include="Converter\ZeroToVisibilityConverter.cs" />
     <Compile Include="ViewModel\FileStatsViewModel.cs" />
     <Compile Include="ViewModel\FileViewModel.cs" />
+    <Compile Include="ViewModel\RecentFilesViewModel.cs" />
     <Compile Include="View\Pane\LayoutInitializer.cs" />
     <Compile Include="View\Pane\PanesStyleSelector.cs" />
     <Compile Include="View\Pane\PanesTemplateSelector.cs" />
@@ -87,6 +89,13 @@
     <Compile Include="ViewModel\Base\ToolViewModel.cs" />
     <Compile Include="ViewModel\Base\ViewModelBase.cs" />
     <Compile Include="ViewModel\Workspace.cs" />
+    <Compile Include="View\RecentFilesView.xaml.cs">
+      <DependentUpon>RecentFilesView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Theme.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -99,6 +108,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\RecentFilesView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -134,6 +147,10 @@
     <ProjectReference Include="..\AvalonDock\AvalonDock.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>AvalonDock</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleControls\SimpleControls.csproj">
+      <Project>{0E69BE38-78C0-4662-A0E1-56C5913B5C3A}</Project>
+      <Name>SimpleControls</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

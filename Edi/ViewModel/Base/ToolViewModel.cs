@@ -1,6 +1,11 @@
 ﻿namespace Edi.ViewModel.Base
 {
-    class ToolViewModel : PaneViewModel
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using System.Text;
+
+  class ToolViewModel : PaneViewModel
     {
         public ToolViewModel(string name)
         {
