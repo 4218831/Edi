@@ -1,20 +1,12 @@
 ﻿namespace Edi.ViewModel
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using System.IO;
   using System.Windows.Input;
-  using Microsoft.Win32;
-  using System.Windows;
-  using System.Windows.Media.Imaging;
-  using System.Windows.Media;
   using Edi.Command;
 
-  class FileViewModel : PaneViewModel
+  class FileViewModel : Base.FileBaseViewModel
   {
-    static ImageSourceConverter ISC = new ImageSourceConverter();
     public FileViewModel(string filePath)
     {
       FilePath = filePath;
@@ -29,10 +21,10 @@
 
     #region FilePath
     private string _filePath = null;
-    public string FilePath
+    override public string FilePath
     {
       get { return _filePath; }
-      set
+      protected set
       {
         if (_filePath != value)
         {
@@ -51,7 +43,6 @@
     }
     #endregion
 
-
     public string FileName
     {
       get
@@ -62,8 +53,6 @@
         return System.IO.Path.GetFileName(FilePath) + (IsDirty ? "*" : "");
       }
     }
-
-
 
     #region TextContent
 
@@ -87,7 +76,7 @@
     #region IsDirty
 
     private bool _isDirty = false;
-    public bool IsDirty
+    override public bool IsDirty
     {
       get { return _isDirty; }
       set
@@ -105,7 +94,7 @@
 
     #region SaveCommand
     RelayCommand _saveCommand = null;
-    public ICommand SaveCommand
+    override public ICommand SaveCommand
     {
       get
       {
@@ -118,7 +107,7 @@
       }
     }
 
-    private bool CanSave(object parameter)
+    public bool CanSave(object parameter)
     {
       return IsDirty;
     }
@@ -159,7 +148,7 @@
 
     #region CloseCommand
     RelayCommand _closeCommand = null;
-    public ICommand CloseCommand
+    override public ICommand CloseCommand
     {
       get
       {
@@ -190,6 +179,11 @@
         // This icon is visible in AvalonDock's Document Navigator window
         return new Uri("pack://application:,,,/Edi;component/Images/document.png", UriKind.RelativeOrAbsolute);
       }
+    }
+
+    public void SetFileName(string f)
+    {
+      this._filePath = f;
     }
   }
 }

@@ -6,7 +6,7 @@
   using System.Text;
   using System.Windows.Media;
 
-  class PaneViewModel : Base.ViewModelBase
+  internal class PaneViewModel : Base.ViewModelBase
   {
     public PaneViewModel()
     { }

@@ -21,18 +21,23 @@
 
     void OnActiveDocumentChanged(object sender, EventArgs e)
     {
-      if (Workspace.This.ActiveDocument != null &&
-          Workspace.This.ActiveDocument.FilePath != null &&
-          File.Exists(Workspace.This.ActiveDocument.FilePath))
+      FileSize = 0;
+      LastModified = DateTime.MinValue;
+
+      if (Workspace.This.ActiveDocument != null)
       {
-        var fi = new FileInfo(Workspace.This.ActiveDocument.FilePath);
-        FileSize = fi.Length;
-        LastModified = fi.LastWriteTime;
-      }
-      else
-      {
-        FileSize = 0;
-        LastModified = DateTime.MinValue;
+        FileViewModel f = Workspace.This.ActiveDocument as FileViewModel;
+
+        if (f != null)
+        {
+          if (f.FilePath != null && File.Exists(f.FilePath))
+          {
+            var fi = new FileInfo(f.FilePath);
+            FileSize = fi.Length;
+            LastModified = fi.LastWriteTime;
+          }
+
+        }
       }
     }
 

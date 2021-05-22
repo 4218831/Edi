@@ -2,23 +2,24 @@
 {
   using System;
   using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using System.Collections.ObjectModel;
-  using System.Windows.Input;
-  using Microsoft.Win32;
+  using System.Diagnostics;
   using System.IO;
+  using System.Linq;
   using System.Windows;
-  using Xceed.Wpf.AvalonDock.Layout;
-  using Edi.ViewModel.Base;
+  using System.Windows.Input;
+
   using Edi.Command;
+  using Edi.ViewModel.Base;
+  using Microsoft.Win32;
   using SimpleControls.MRU.ViewModel;
 
   class Workspace : Base.ViewModelBase
   {
     protected Workspace()
     {
-
+      _files = new ObservableCollection<FileBaseViewModel>();
+      _files.Add(new StartPageViewModel());
     }
 
     static Workspace _this = new Workspace();
@@ -28,14 +29,14 @@
       get { return _this; }
     }
 
-    ObservableCollection<FileViewModel> _files = new ObservableCollection<FileViewModel>();
-    ReadOnlyObservableCollection<FileViewModel> _readonyFiles = null;
-    public ReadOnlyObservableCollection<FileViewModel> Files
+    ObservableCollection<FileBaseViewModel> _files = null;
+    ReadOnlyObservableCollection<FileBaseViewModel> _readonyFiles = null;
+    public ReadOnlyObservableCollection<FileBaseViewModel> Files
     {
       get
       {
         if (_readonyFiles == null)
-          _readonyFiles = new ReadOnlyObservableCollection<FileViewModel>(_files);
+          _readonyFiles = new ReadOnlyObservableCollection<FileBaseViewModel>(_files);
 
         return _readonyFiles;
       }
@@ -97,19 +98,17 @@
 
     public FileViewModel Open(string filepath)
     {
+      List<FileViewModel> filesFileViewModel = this._files.OfType<FileViewModel>().ToList();
+
       // Verify whether file is already open in editor, and if so, show it
-      var fileViewModel = _files.FirstOrDefault(fm => fm.FilePath == filepath);
+      var fileViewModel = filesFileViewModel.FirstOrDefault(fm => fm.FilePath == filepath);
 
       if (fileViewModel != null)
       {
-        this.ActiveDocument = fileViewModel; // File is already open so shiw it
+        this.ActiveDocument = fileViewModel; // File is already open so show it
 
         return fileViewModel;
       }
-
-      fileViewModel = _files.FirstOrDefault(fm => fm.FilePath == filepath);
-      if (fileViewModel != null)
-        return fileViewModel;
 
       fileViewModel = new FileViewModel(filepath);
       _files.Add(fileViewModel);
@@ -150,8 +149,8 @@
 
     #region ActiveDocument
 
-    private FileViewModel _activeDocument = null;
-    public FileViewModel ActiveDocument
+    private FileBaseViewModel _activeDocument = null;
+    public FileBaseViewModel ActiveDocument
     {
       get { return _activeDocument; }
       set
@@ -170,21 +169,47 @@
 
     #endregion
 
-
-    internal void Close(FileViewModel fileToClose)
+    internal void Close(FileBaseViewModel doc)
     {
-      if (fileToClose.IsDirty)
       {
-        var res = MessageBox.Show(string.Format("Save changes for file '{0}'?", fileToClose.FileName), "AvalonDock Test App", MessageBoxButton.YesNoCancel);
-        if (res == MessageBoxResult.Cancel)
-          return;
-        if (res == MessageBoxResult.Yes)
+        FileViewModel fileToClose = doc as FileViewModel;
+
+        if (fileToClose != null)
         {
-          Save(fileToClose);
+          if (fileToClose.IsDirty)
+          {
+            var res = MessageBox.Show(string.Format("Save changes for file '{0}'?", fileToClose.FileName), "AvalonDock Test App", MessageBoxButton.YesNoCancel);
+            if (res == MessageBoxResult.Cancel)
+              return;
+
+            if (res == MessageBoxResult.Yes)
+            {
+              Save(fileToClose);
+            }
+          }
+
+          _files.Remove(fileToClose);
+
+          return;
+          
         }
       }
 
-      _files.Remove(fileToClose);
+      {
+        StartPageViewModel s = doc as StartPageViewModel;
+        if (s != null)
+        {
+          _files.Remove(doc);
+
+          if (this._files.Count == 0)
+            this.ActiveDocument = null;
+          else
+            this.ActiveDocument = this._files[0];
+
+          return;
+        }
+      }
+
     }
 
     internal void Save(FileViewModel fileToSave, bool saveAsFlag = false)
@@ -193,11 +218,18 @@
       {
         var dlg = new SaveFileDialog();
         if (dlg.ShowDialog().GetValueOrDefault())
-          fileToSave.FilePath = dlg.SafeFileName;
+          fileToSave.SetFileName(dlg.SafeFileName);
       }
 
       File.WriteAllText(fileToSave.FilePath, fileToSave.TextContent);
-      ActiveDocument.IsDirty = false;
+
+      if (this.ActiveDocument != null)
+      {
+        if (this.ActiveDocument is FileViewModel)
+        {
+          ((FileViewModel)ActiveDocument).IsDirty = false;
+        }
+      }
     }
 
     #region Recent File List Pin Unpin Commands
@@ -262,6 +294,18 @@
     /// <param name="win"></param>
     public void InitCommandBinding(Window win)
     {
+      win.CommandBindings.Add(new CommandBinding(ApplicationCommands.New,
+      (s, e) =>
+      {
+        this.OnNew(null);
+      }));
+
+      win.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open,
+      (s, e) =>
+      {
+        this.OnOpen(null);
+      }));
+
       win.CommandBindings.Add(new CommandBinding(AppCommand.LoadFile,
       (s, e) =>
       {
@@ -293,6 +337,50 @@
       {
         this.AddMRUEntry_Executed(e.Parameter, e);
       }));
+
+      win.CommandBindings.Add(new CommandBinding(AppCommand.BrowseURL,
+      (s, e) =>
+      {
+        Process.Start(new ProcessStartInfo("http://Edi.codeplex.com"));
+      }));
+
+      win.CommandBindings.Add(new CommandBinding(AppCommand.ShowStartPage,
+      (s, e) =>
+      {
+        StartPageViewModel spage = this.GetStartPage(true);
+
+        if (spage != null)
+        {
+          this.ActiveDocument = spage;
+        }
+      }));
+    }
+
+    /// <summary>
+    /// Construct and add a new <seealso cref="StartPageViewModel"/> to intenral
+    /// list of documents, if none is already present, otherwise return already
+    /// present <seealso cref="StartPageViewModel"/> from internal document collection.
+    /// </summary>
+    /// <param name="CreateNewViewModelIfNecessary"></param>
+    /// <returns></returns>
+    internal StartPageViewModel GetStartPage(bool CreateNewViewModelIfNecessary)
+    {
+      List<StartPageViewModel> l = this._files.OfType<StartPageViewModel>().ToList();
+
+      if (l.Count == 0)
+      {
+        if (CreateNewViewModelIfNecessary == false)
+          return null;
+        else
+        {
+          StartPageViewModel s = new StartPageViewModel();
+          this._files.Add(s);
+
+          return s;
+        }
+      }
+
+      return l[0];
     }
   }
 }

@@ -1,22 +1,31 @@
 ﻿namespace Edi.View.Pane
 {
-    using System.Windows.Controls;
-    using System.Windows;
-    using Xceed.Wpf.AvalonDock.Layout;
-    using Edi.ViewModel;
+  using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using System.Text;
+  using System.Windows.Controls;
+  using System.Windows;
+  using AvalonDock.Layout;
+  using Edi.ViewModel;
 
-    class PanesTemplateSelector : DataTemplateSelector
+  class PanesTemplateSelector : DataTemplateSelector
     {
         public PanesTemplateSelector()
         {
         
         }
 
-
         public DataTemplate FileViewTemplate
         {
             get;
             set;
+        }
+
+        public DataTemplate StartPageViewTemplate
+        {
+          get;
+          set;
         }
 
         public DataTemplate RecentFilesViewTemplate
@@ -37,6 +46,9 @@
 
             if (item is FileViewModel)
                 return FileViewTemplate;
+
+            if (item is StartPageViewModel)
+              return StartPageViewTemplate;
 
             if (item is FileStatsViewModel)
                 return FileStatsViewTemplate;

@@ -5,11 +5,15 @@
   public class AppCommand
   {
     #region CommandFramework Fields
+    private static RoutedUICommand newFile;
     private static RoutedUICommand loadFile;
 
     private static RoutedUICommand pinUnpin;
     private static RoutedUICommand addMruEntry;
     private static RoutedUICommand removeMruEntry;
+
+    private static RoutedUICommand browseURL;
+    private static RoutedUICommand showStartPage;
     #endregion CommandFramework Fields
 
     #region Static Constructor (Constructs static application commands)
@@ -35,6 +39,17 @@
       // Execute file open command (without user interaction)
       inputs = new InputGestureCollection();
       AppCommand.loadFile = new RoutedUICommand("Open ...", "LoadFile", typeof(AppCommand), inputs);
+
+      // Execute file open command (without user interaction)
+      inputs = new InputGestureCollection();
+      AppCommand.browseURL = new RoutedUICommand("Open URL ...", "OpenURL", typeof(AppCommand), inputs);
+
+      // Execute file open command (without user interaction)
+      inputs = new InputGestureCollection();
+      AppCommand.newFile = new RoutedUICommand("New File", "NewFile", typeof(AppCommand), inputs);
+
+      inputs = new InputGestureCollection();
+      AppCommand.showStartPage = new RoutedUICommand("Show Start Page", "ShowStartPage", typeof(AppCommand), inputs);      
     }
     #endregion Static Constructor
 
@@ -69,6 +84,16 @@
     public static RoutedUICommand LoadFile
     {
       get { return AppCommand.loadFile; }
+    }
+
+    public static RoutedUICommand BrowseURL
+    {
+      get { return AppCommand.browseURL; }
+    }
+
+    public static RoutedUICommand ShowStartPage
+    {
+      get { return AppCommand.showStartPage; }
     }
     #endregion CommandFramwork_Properties
   }
