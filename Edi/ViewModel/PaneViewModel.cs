@@ -1,12 +1,12 @@
 ﻿namespace Edi.ViewModel
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using System.Windows.Media;
+  using GalaSoft.MvvmLight;
 
-  class PaneViewModel : Base.ViewModelBase
+  /// <summary>
+  /// Class to manage tool window content.
+  /// </summary>
+  public class PaneViewModel : ViewModelBase
   {
     public PaneViewModel()
     { }
@@ -23,7 +23,7 @@
         if (_title != value)
         {
           _title = value;
-          RaisePropertyChanged("Title");
+          this.RaisePropertyChanged(() => this.Title);
         }
       }
     }
@@ -47,7 +47,7 @@
         if (_contentId != value)
         {
           _contentId = value;
-          RaisePropertyChanged("ContentId");
+          this.RaisePropertyChanged(() => this.ContentId);
         }
       }
     }
@@ -65,7 +65,7 @@
         if (_isSelected != value)
         {
           _isSelected = value;
-          RaisePropertyChanged("IsSelected");
+          this.RaisePropertyChanged(() => this.IsSelected);
         }
       }
     }
@@ -83,7 +83,7 @@
         if (_isActive != value)
         {
           _isActive = value;
-          RaisePropertyChanged("IsActive");
+          this.RaisePropertyChanged(() => this.IsActive);
         }
       }
     }

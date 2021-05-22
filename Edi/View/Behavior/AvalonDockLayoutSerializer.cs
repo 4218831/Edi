@@ -3,8 +3,8 @@
   using System.IO;
   using System.Windows;
   using System.Windows.Input;
-  using AvalonDock;
-  using AvalonDock.Layout.Serialization;
+  using Xceed.Wpf.AvalonDock;
+  using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
   /// <summary>
   /// Class implements an attached behavior to load/save a layout for AvalonDock manager.

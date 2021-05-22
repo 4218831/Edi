@@ -4,7 +4,7 @@
   using System.Collections.Generic;
   using System.Linq;
   using System.Text;
-  using AvalonDock.Layout;
+  using Xceed.Wpf.AvalonDock.Layout;
 
   class LayoutInitializer : ILayoutUpdateStrategy
   {

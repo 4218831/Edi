@@ -1,19 +1,15 @@
 ﻿namespace Edi.ViewModel
 {
   using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using System.IO;
   using System.Windows.Media.Imaging;
-  using System.Windows.Media;
 
-  class FileStatsViewModel : Base.ToolViewModel
+  public class FileStatsViewModel : Base.ToolViewModel
   {
     public FileStatsViewModel()
       : base("File Stats")
     {
-      Workspace.This.ActiveDocumentChanged += new EventHandler(OnActiveDocumentChanged);
+      ApplicationViewModel.This.ActiveDocumentChanged += new EventHandler(OnActiveDocumentChanged);
       ContentId = ToolContentId;
 
       BitmapImage bi = new BitmapImage();
@@ -27,11 +23,11 @@
 
     void OnActiveDocumentChanged(object sender, EventArgs e)
     {
-      if (Workspace.This.ActiveDocument != null &&
-          Workspace.This.ActiveDocument.FilePath != null &&
-          File.Exists(Workspace.This.ActiveDocument.FilePath))
+      if (ApplicationViewModel.This.ActiveDocument != null &&
+          ApplicationViewModel.This.ActiveDocument.FilePath != null &&
+          File.Exists(ApplicationViewModel.This.ActiveDocument.FilePath))
       {
-        var fi = new FileInfo(Workspace.This.ActiveDocument.FilePath);
+        var fi = new FileInfo(ApplicationViewModel.This.ActiveDocument.FilePath);
         FileSize = fi.Length;
         LastModified = fi.LastWriteTime;
       }

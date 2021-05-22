@@ -1,21 +1,18 @@
 ﻿namespace Edi.ViewModel
 {
-  using System;
-  using System.Collections.Generic;
-  using System.Linq;
-  using System.Text;
   using System.IO;
+  using System.Text;
   using System.Windows.Input;
-  using Microsoft.Win32;
-  using System.Windows;
-  using System.Windows.Media.Imaging;
   using System.Windows.Media;
-  using Edi.Command;
+  using GalaSoft.MvvmLight.Command;
   using ICSharpCode.AvalonEdit.Document;
-  using ICSharpCode.AvalonEdit.Utils;
   using ICSharpCode.AvalonEdit.Highlighting;
+  using ICSharpCode.AvalonEdit.Utils;
 
-  class FileViewModel : PaneViewModel
+  /// <summary>
+  /// Class to manage viewmodel properties and methods for a text (file) editor.
+  /// </summary>
+  public class FileViewModel : PaneViewModel
   {
     #region fields
     static ImageSourceConverter ISC = new ImageSourceConverter();
@@ -139,7 +136,7 @@
     /// <summary>
     /// Title is the string that is usually displayed - with or without dirty mark '*' - in the docking environment
     /// </summary>
-    public string Title
+    new public string Title
     {
       get
       {
@@ -280,14 +277,14 @@
     #endregion TextEditorOptions
 
     #region SaveCommand
-    RelayCommand _saveCommand = null;
+    RelayCommand<object> _saveCommand = null;
     public ICommand SaveCommand
     {
       get
       {
         if (_saveCommand == null)
         {
-          _saveCommand = new RelayCommand((p) => OnSave(p), (p) => CanSave(p));
+          _saveCommand = new RelayCommand<object>((p) => OnSave(p), (p) => CanSave(p));
         }
 
         return _saveCommand;
@@ -301,20 +298,20 @@
 
     private void OnSave(object parameter)
     {
-      Workspace.This.Save(this, false);
+      ApplicationViewModel.This.Save(this, false);
     }
 
     #endregion
 
     #region SaveAsCommand
-    RelayCommand _saveAsCommand = null;
+    RelayCommand<object> _saveAsCommand = null;
     public ICommand SaveAsCommand
     {
       get
       {
         if (_saveAsCommand == null)
         {
-          _saveAsCommand = new RelayCommand((p) => OnSaveAs(p), (p) => CanSaveAs(p));
+          _saveAsCommand = new RelayCommand<object>((p) => OnSaveAs(p), (p) => CanSaveAs(p));
         }
 
         return _saveAsCommand;
@@ -328,20 +325,20 @@
 
     private void OnSaveAs(object parameter)
     {
-      Workspace.This.Save(this, true);
+      ApplicationViewModel.This.Save(this, true);
     }
 
     #endregion
 
     #region CloseCommand
-    RelayCommand _closeCommand = null;
+    RelayCommand<object> _closeCommand = null;
     public ICommand CloseCommand
     {
       get
       {
         if (_closeCommand == null)
         {
-          _closeCommand = new RelayCommand((p) => OnClose(), (p) => CanClose());
+          _closeCommand = new RelayCommand<object>((p) => OnClose(), (p) => CanClose());
         }
 
         return _closeCommand;
@@ -355,7 +352,7 @@
 
     private void OnClose()
     {
-      Workspace.This.Close(this);
+      ApplicationViewModel.This.Close(this);
     }
     #endregion
   }
