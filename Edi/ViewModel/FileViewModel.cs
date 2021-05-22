@@ -21,7 +21,7 @@
     static ImageSourceConverter ISC = new ImageSourceConverter();
     #endregion fields
 
-    #region fields
+    #region constructor
     public FileViewModel(string filePath)
     {
       FilePath = filePath;
@@ -36,7 +36,7 @@
       IsDirty = true;
       Title = FileName;
     }
-    #endregion fields
+    #endregion constructor
 
     #region FilePath
     private string _filePath = null;
@@ -58,6 +58,8 @@
             this.HighlightDef = HighlightingManager.Instance.GetDefinition("XML");
             this._isDirty = false;
             this.IsReadOnly = false;
+            this.ShowLineNumbers = false;
+            this.WordWrap = false;
 
             // Check file attributes and set to read-only if file attributes indicate that
             if ((System.IO.File.GetAttributes(this._filePath) & FileAttributes.ReadOnly) != 0)
@@ -209,6 +211,74 @@
     }
     #endregion IsReadOnly
 
+    #region WordWrap
+    // Toggle state WordWrap
+    private bool mWordWrap = false;
+    public bool WordWrap
+    {
+      get
+      {
+        return this.mWordWrap;
+      }
+
+      set
+      {
+        if (this.mWordWrap != value)
+        {
+          this.mWordWrap = value;
+          this.RaisePropertyChanged("WordWrap");
+        }
+      }
+    }
+    #endregion WordWrap
+
+    #region ShowLineNumbers
+    // Toggle state ShowLineNumbers
+    private bool mShowLineNumbers = false;
+    public bool ShowLineNumbers
+    {
+      get
+      {
+        return this.mShowLineNumbers;
+      }
+
+      set
+      {
+        if (this.mShowLineNumbers != value)
+        {
+          this.mShowLineNumbers = value;
+          this.RaisePropertyChanged("ShowLineNumbers");
+        }
+      }
+    }
+    #endregion ShowLineNumbers
+
+    #region TextEditorOptions
+    private ICSharpCode.AvalonEdit.TextEditorOptions mTextOptions
+      = new ICSharpCode.AvalonEdit.TextEditorOptions()
+      {
+        ConvertTabsToSpaces= false,
+        IndentationSize = 2
+      };
+
+    public ICSharpCode.AvalonEdit.TextEditorOptions TextOptions
+    {
+      get
+      {
+        return this.mTextOptions;
+      }
+
+      set
+      {
+        if (this.mTextOptions != value)
+        {
+          this.mTextOptions = value;
+          this.RaisePropertyChanged("TextOptions");
+        }
+      }
+    }
+    #endregion TextEditorOptions
+
     #region SaveCommand
     RelayCommand _saveCommand = null;
     public ICommand SaveCommand
@@ -288,6 +358,5 @@
       Workspace.This.Close(this);
     }
     #endregion
-
   }
 }

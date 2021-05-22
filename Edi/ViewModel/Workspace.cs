@@ -14,6 +14,15 @@
   using Edi.Command;
   using ICSharpCode.AvalonEdit.Document;
 
+  public enum ToggleEditorOption
+  {
+    WordWrap = 0,
+    ShowLineNumber = 1,
+    ShowEndOfLine = 2,
+    ShowSpaces = 3,
+    ShowTabs = 4
+  }
+
   class Workspace : Base.ViewModelBase
   {
     protected Workspace()
@@ -27,7 +36,6 @@
     {
       get { return _this; }
     }
-
 
     ObservableCollection<FileViewModel> _files = new ObservableCollection<FileViewModel>();
     ReadOnlyObservableCollection<FileViewModel> _readonyFiles = null;
@@ -104,6 +112,7 @@
 
       fileViewModel = new FileViewModel(filepath);
       _files.Add(fileViewModel);
+
       return fileViewModel;
     }
 
@@ -159,7 +168,6 @@
 
     #endregion
 
-
     internal void Close(FileViewModel fileToClose)
     {
       if (fileToClose.IsDirty)
@@ -189,7 +197,71 @@
       ActiveDocument.IsDirty = false;
     }
 
+    #region ToggleEditorOptionCommand
+    RelayCommand _toggleEditorOptionCommand = null;
+    public ICommand ToggleEditorOptionCommand
+    {
+      get
+      {
+        if (this._toggleEditorOptionCommand == null)
+        {
+          this._toggleEditorOptionCommand = new RelayCommand((p) => OnToggleEditorOption(p),
+                                                             (p) => CanToggleEditorOption(p));
+        }
 
+        return this._toggleEditorOptionCommand;
+      }
+    }
 
+    private bool CanToggleEditorOption(object parameter)
+    {
+      if (this.ActiveDocument != null)
+        return true;
+
+      return false;
+    }
+
+    private void OnToggleEditorOption(object parameter)
+    {
+      FileViewModel f = this.ActiveDocument;
+
+      if (parameter == null)
+        return;
+
+      if ((parameter is ToggleEditorOption) == false)
+        return;
+
+      ToggleEditorOption t = (ToggleEditorOption)parameter;
+
+      if (f != null)
+      {
+        switch (t)
+        {
+          case ToggleEditorOption.WordWrap:
+              f.WordWrap = !f.WordWrap;
+            break;
+
+          case ToggleEditorOption.ShowLineNumber:
+              f.ShowLineNumbers = !f.ShowLineNumbers;
+            break;
+
+          case ToggleEditorOption.ShowSpaces:
+            f.TextOptions.ShowSpaces = !f.TextOptions.ShowSpaces;
+            break;
+
+          case ToggleEditorOption.ShowTabs:
+            f.TextOptions.ShowTabs = !f.TextOptions.ShowTabs;
+            break;
+
+          case ToggleEditorOption.ShowEndOfLine:
+            f.TextOptions.ShowEndOfLine = !f.TextOptions.ShowEndOfLine;
+            break;
+
+          default:
+            break;
+        }
+      }
+    }
+    #endregion ToggleEditorOptionCommand
   }
 }

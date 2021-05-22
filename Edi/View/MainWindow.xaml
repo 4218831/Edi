@@ -6,6 +6,7 @@
 
         xmlns:conv="clr-namespace:Edi.Converter"
         xmlns:pane="clr-namespace:Edi.View.Pane"
+        xmlns:vm="clr-namespace:Edi.ViewModel"
 
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:sysWindows="clr-namespace:System.Windows;assembly=PresentationCore"
@@ -76,7 +77,45 @@
               ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}">
           <Image Source="/Edi;component/Images/App/Edit_Redo32.png" Height="32"/>
         </Button>
+
+        <Separator Margin="3" />
+
+        <ToggleButton IsChecked="{Binding ActiveDocument.WordWrap, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                      Command="{Binding ToggleEditorOptionCommand}"
+                      CommandParameter="{x:Static vm:ToggleEditorOption.WordWrap}"
+                      ToolTip="Click this button to switch word wrap on or off"
+                      >
+          <Image Source="/Edi;component/Images/App/ShowWordWrap32.png" Height="32"/>
+        </ToggleButton>
+
+        <ToggleButton IsChecked="{Binding ActiveDocument.ShowLineNumbers, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                      Command="{Binding ToggleEditorOptionCommand}"
+                      CommandParameter="{x:Static vm:ToggleEditorOption.ShowLineNumber}"
+                      ToolTip="Click this button to switch display of line numbers on or off">
+          <Image Source="/Edi;component/Images/App/ShowLineNumbers32.png" Height="32"/>
+        </ToggleButton>
+
+        <ToggleButton IsChecked="{Binding ActiveDocument.TextOptions.ShowEndOfLine, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+              Command="{Binding ToggleEditorOptionCommand}"
+              CommandParameter="{x:Static vm:ToggleEditorOption.ShowEndOfLine}"
+              ToolTip="Highlighted end of line in text (toggle on/off)">
+          <Image Source="/Edi;component/Images/App/ShowEnter32.png" Height="32"/>
+        </ToggleButton>
+        <ToggleButton IsChecked="{Binding ActiveDocument.TextOptions.ShowSpaces, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+              Command="{Binding ToggleEditorOptionCommand}"
+              CommandParameter="{x:Static vm:ToggleEditorOption.ShowSpaces}"
+              ToolTip="Highlight spaces characters in text (toggle on/off)">
+          <Image Source="/Edi;component/Images/App/ShowSpaces32.png" Height="32"/>
+        </ToggleButton>
+        <ToggleButton IsChecked="{Binding ActiveDocument.TextOptions.ShowTabs, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+              Command="{Binding ToggleEditorOptionCommand}"
+              CommandParameter="{x:Static vm:ToggleEditorOption.ShowTabs}"
+              ToolTip="Highlight tab characters in text (toggle on/off)">
+          <Image Source="/Edi;component/Images/App/ShowTab32.png" Height="32"/>
+        </ToggleButton>
       </ToolBar>
+
+
     </ToolBarTray>
 
       <avalonDock:DockingManager x:Name="dockManager" 
@@ -115,8 +154,11 @@
             <DataTemplate>
               <avalonEdit:TextEditor Document="{Binding Document, UpdateSourceTrigger=PropertyChanged}"
                                       SyntaxHighlighting="{Binding HighlightDef}"
-									                    IsModified="{Binding Path=IsDirty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       IsReadOnly="{Binding IsReadOnly}"
+									                    IsModified="{Binding Path=IsDirty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      WordWrap="{Binding Path=WordWrap, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      ShowLineNumbers="{Binding Path=ShowLineNumbers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Options="{Binding TextOptions}"
                                       >
                 <avalonEdit:TextEditor.ContextMenu>
                   <ContextMenu>

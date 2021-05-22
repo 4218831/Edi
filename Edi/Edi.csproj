@@ -157,7 +157,6 @@
     <Resource Include="Images\App\ShowSpaces32.png" />
     <Resource Include="Images\App\ShowTab32.png" />
     <Resource Include="Images\App\ShowWordWrap32.png" />
-    <Resource Include="Images\App\SyntaxHighlighting_32.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\document.png" />
