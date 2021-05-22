@@ -77,8 +77,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Converter\ActiveDocumentConverter.cs" />
-    <Compile Include="Converter\ZeroToVisibilityConverter.cs" />
     <Compile Include="UITest\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -96,16 +94,6 @@
     <Compile Include="UITest\WinFormControl1.designer.cs">
       <DependentUpon>WinFormControl1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\FileStatsViewModel.cs" />
-    <Compile Include="ViewModel\FileViewModel.cs" />
-    <Compile Include="View\Pane\LayoutInitializer.cs" />
-    <Compile Include="View\Pane\PanesStyleSelector.cs" />
-    <Compile Include="View\Pane\PanesTemplateSelector.cs" />
-    <Compile Include="ViewModel\PaneViewModel.cs" />
-    <Compile Include="Command\RelayCommand.cs" />
-    <Compile Include="ViewModel\Base\ToolViewModel.cs" />
-    <Compile Include="ViewModel\Base\ViewModelBase.cs" />
-    <Compile Include="ViewModel\Workspace.cs" />
     <Page Include="UITest\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -159,17 +147,12 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\document.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\property-blue.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\AvalonDock\AvalonDock.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>AvalonDock</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
