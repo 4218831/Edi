@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:avalonDock="http://avalondock.codeplex.com"
         xmlns:shell="clr-namespace:Microsoft.Windows.Shell;assembly=AvalonDock"
+        xmlns:form="clr-namespace:WpfEmbedWinForm"
 
         xmlns:conv="clr-namespace:Edi.Converter"
         xmlns:pane="clr-namespace:Edi.View.Pane"
@@ -52,25 +53,26 @@
                 <avalonDock:Vs2013LightTheme/>
             </avalonDock:DockingManager.Theme -->
             <avalonDock:DockingManager.LayoutItemTemplateSelector>
-                <pane:PanesTemplateSelector>
-                    <pane:PanesTemplateSelector.FileViewTemplate>
+                <form:AvalonPadTemplateSelector>
+                    <!--<pane:PanesTemplateSelector.FileViewTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding TextContent, UpdateSourceTrigger=PropertyChanged}"
                                      BorderThickness="0" />
                         </DataTemplate>
-                    </pane:PanesTemplateSelector.FileViewTemplate>
-                    <pane:PanesTemplateSelector.FileStatsViewTemplate>
+                    </pane:PanesTemplateSelector.FileViewTemplate>-->
+                    <form:AvalonPadTemplateSelector.StringTemplate>
                         <DataTemplate>
-                            <Border Padding="5">
+                            <form:UserControl1/>
+                            <!--<Border Padding="5">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock Text="{Binding FileSize}"/>
                                     <TextBlock Text="{Binding LastModified}"/>
                                     <TextBox Text="test"/>
                                 </StackPanel>
-                            </Border>
+                            </Border>-->
                         </DataTemplate>
-                    </pane:PanesTemplateSelector.FileStatsViewTemplate>
-                </pane:PanesTemplateSelector>
+                    </form:AvalonPadTemplateSelector.StringTemplate>
+                </form:AvalonPadTemplateSelector>
             </avalonDock:DockingManager.LayoutItemTemplateSelector>
 
             <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
