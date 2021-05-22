@@ -75,18 +75,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="AppCommand.cs" />
-    <Compile Include="Behaviour\KeyboardFocus.cs" />
     <Compile Include="Converter\ActiveDocumentConverter.cs" />
-    <Compile Include="Converter\ZeroToVisibilityConverter.cs" />
-    <Compile Include="ViewModel\Base\FileBaseViewModel.cs" />
     <Compile Include="ViewModel\FileStatsViewModel.cs" />
     <Compile Include="ViewModel\FileViewModel.cs" />
-    <Compile Include="ViewModel\RecentFilesViewModel.cs" />
-    <Compile Include="ViewModel\StartPageViewModel.cs" />
-    <Compile Include="View\DocumentView.xaml.cs">
-      <DependentUpon>DocumentView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Pane\LayoutInitializer.cs" />
     <Compile Include="View\Pane\PanesStyleSelector.cs" />
     <Compile Include="View\Pane\PanesTemplateSelector.cs" />
@@ -95,20 +86,6 @@
     <Compile Include="ViewModel\Base\ToolViewModel.cs" />
     <Compile Include="ViewModel\Base\ViewModelBase.cs" />
     <Compile Include="ViewModel\Workspace.cs" />
-    <Compile Include="View\RecentFilesView.xaml.cs">
-      <DependentUpon>RecentFilesView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\StartPage.xaml.cs">
-      <DependentUpon>StartPage.xaml</DependentUpon>
-    </Compile>
-    <Page Include="Theme.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\DocumentView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -121,14 +98,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\RecentFilesView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\StartPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -155,29 +124,44 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\document.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\property-blue.png" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\AvalonDock\AvalonDock.csproj">
       <Project>{DB81988F-E0F2-45A0-A1FD-8C37F3D35244}</Project>
       <Name>AvalonDock</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SimpleControls\SimpleControls.csproj">
-      <Project>{0E69BE38-78C0-4662-A0E1-56C5913B5C3A}</Project>
-      <Name>SimpleControls</Name>
+    <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
+      <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
+      <Name>ICSharpCode.AvalonEdit</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\App\File_Open64.png" />
+    <Resource Include="Images\App\DocTab\Lock-icon.png" />
+    <Resource Include="Images\App\Edit_Copy32.png" />
+    <Resource Include="Images\App\Edit_Cut32.png" />
+    <Resource Include="Images\App\Edit_Delete32.png" />
+    <Resource Include="Images\App\Edit_Find16.ico" />
+    <Resource Include="Images\App\Edit_Find32.png" />
+    <Resource Include="Images\App\Edit_Find_Replace32.png" />
+    <Resource Include="Images\App\Edit_Paste32.png" />
+    <Resource Include="Images\App\Edit_Redo32.png" />
+    <Resource Include="Images\App\Edit_Undo32.png" />
+    <Resource Include="Images\App\File_New32.png" />
+    <Resource Include="Images\App\File_Open32.png" />
+    <Resource Include="Images\App\File_Save16.png" />
+    <Resource Include="Images\App\File_Save32.png" />
+    <Resource Include="Images\App\File_Save64.png" />
+    <Resource Include="Images\App\File_Save_All32.png" />
+    <Resource Include="Images\App\Help_About32.png" />
+    <Resource Include="Images\App\Help_Hint32.png" />
+    <Resource Include="Images\App\ShowEnter32.png" />
+    <Resource Include="Images\App\ShowLineNumbers32.png" />
+    <Resource Include="Images\App\ShowSpaces32.png" />
+    <Resource Include="Images\App\ShowTab32.png" />
+    <Resource Include="Images\App\ShowWordWrap32.png" />
+    <Resource Include="Images\App\SyntaxHighlighting_32.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\App\Edi100.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\App\File_New64.png" />
+    <Resource Include="Images\document.png" />
+    <Resource Include="Images\property-blue.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -16,22 +16,11 @@
         
         }
 
+
         public DataTemplate FileViewTemplate
         {
             get;
             set;
-        }
-
-        public DataTemplate StartPageViewTemplate
-        {
-          get;
-          set;
-        }
-
-        public DataTemplate RecentFilesViewTemplate
-        {
-          get;
-          set;
         }
 
         public DataTemplate FileStatsViewTemplate
@@ -47,14 +36,8 @@
             if (item is FileViewModel)
                 return FileViewTemplate;
 
-            if (item is StartPageViewModel)
-              return StartPageViewTemplate;
-
             if (item is FileStatsViewModel)
                 return FileStatsViewTemplate;
-
-            if (item is RecentFilesViewModel)
-              return RecentFilesViewTemplate;
 
             return base.SelectTemplate(item, container);
         }

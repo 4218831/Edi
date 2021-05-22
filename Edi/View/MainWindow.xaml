@@ -6,144 +6,201 @@
 
         xmlns:conv="clr-namespace:Edi.Converter"
         xmlns:pane="clr-namespace:Edi.View.Pane"
-        xmlns:view="clr-namespace:Edi.View"
-        xmlns:cmd="clr-namespace:Edi"
 
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:sysWindows="clr-namespace:System.Windows;assembly=PresentationCore"
+
+        xmlns:avalonEdit="http://icsharpcode.net/sharpdevelop/avalonedit"
+
         x:Name="mainWindow"
-        Title="MainWindow" Height="850" Width="925">
-    <Window.Resources>
-        <conv:ActiveDocumentConverter x:Key="ActiveDocumentConverter"/>
-        <avalonDock:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-    </Window.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Menu>
-            <MenuItem Header="_File">
-                <MenuItem Header="New" Command="{Binding NewCommand}"/>
-                <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
-                <Separator/>
-                <MenuItem Header="Save" Command="{Binding ActiveDocument.SaveCommand}"/>
-                <MenuItem Header="Save As..." Command="{Binding ActiveDocument.SaveAsCommand}"/>
+        Title="MainWindow" Height="650" Width="825">
+  <Window.Resources>
+    <conv:ActiveDocumentConverter x:Key="ActiveDocumentConverter"/>
+    <avalonDock:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+  </Window.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
 
-                <MenuItem ItemsSource="{Binding RecentFiles.MruList.ListOfMRUEntries}" Grid.Row="0" Header="Recent Files"
-                          Visibility="{Binding Path=RecentFiles.MruList.ListOfMRUEntries, Mode=OneWay, Converter={conv:ZeroToVisibilityConverter}}">
-                  <MenuItem.ItemContainerStyle>
-                    <Style TargetType="MenuItem">
-                      <Setter Property="Header" Value="{Binding DisplayPathFileName, Mode=OneWay}" />
-                      <Setter Property="Command" Value="cmd:AppCommand.LoadFile" />
-                      <Setter Property="CommandParameter" Value="{Binding PathFileName, Mode=OneWay}" />
-                    </Style>
-                  </MenuItem.ItemContainerStyle>
-                </MenuItem>
-                <Separator/>
-                <MenuItem Header="Close" Command="{Binding ActiveDocument.CloseCommand}"/>
+    <Menu Grid.Row="0">
+      <MenuItem Header="_File">
+        <MenuItem Header="New" Command="{Binding NewCommand}"/>
+        <MenuItem Header="Open" Command="{Binding OpenCommand}"/>
+        <Separator/>
+        <MenuItem Header="Save" Command="{Binding ActiveDocument.SaveCommand}"/>
+        <MenuItem Header="Save As..." Command="{Binding ActiveDocument.SaveAsCommand}"/>
+        <Separator/>
+        <MenuItem Header="Close" Command="{Binding ActiveDocument.CloseCommand}"/>
+      </MenuItem>
+      <MenuItem Header="_Tools">
+        <MenuItem Header="Properties" IsChecked="{Binding FileStats.IsVisible, Mode=TwoWay}" IsCheckable="True"/>
+      </MenuItem>
+      <MenuItem Header="_Layout">
+        <MenuItem Header="Load" Command="{Binding LoadLayoutCommand, ElementName=mainWindow}"/>
+        <MenuItem Header="Save" Command="{Binding SaveLayoutCommand, ElementName=mainWindow}"/>
+        <MenuItem Header="Dump to Console" Click="OnDumpToConsole"/>
+      </MenuItem>
+    </Menu>
+    <!--AnchorablesSource="{Binding Tools}" DocumentsSource="{Binding Files}"-->
 
-            </MenuItem>
-                <MenuItem Header="Tools">
-                  <MenuItem Header="RecentFiles" IsChecked="{Binding RecentFiles.IsVisible, Mode=TwoWay}" IsCheckable="True"/>
-                  <MenuItem Header="Properties" IsChecked="{Binding FileStats.IsVisible, Mode=TwoWay}" IsCheckable="True"/>
-                  <MenuItem Header="Show Start Page" Command="cmd:AppCommand.ShowStartPage"/>
-                </MenuItem>
-                <MenuItem Header="Layout">
-                    <MenuItem Header="Load" Command="{Binding LoadLayoutCommand, ElementName=mainWindow}"/>
-                    <MenuItem Header="Save" Command="{Binding SaveLayoutCommand, ElementName=mainWindow}"/>
-                    <MenuItem Header="Dump to Console" Click="OnDumpToConsole"/>
-            </MenuItem>
-        </Menu><!--AnchorablesSource="{Binding Tools}" DocumentsSource="{Binding Files}"-->
-        <avalonDock:DockingManager x:Name="dockManager" 
+    <ToolBarTray Grid.Row="1" SnapsToDevicePixels="True" >
+      <ToolBar  VerticalAlignment="Stretch" ToolBarTray.IsLocked="True"
+                SnapsToDevicePixels="True">
+
+        <Button Command="Copy" SnapsToDevicePixels="True"
+                ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}">
+          <Image Source="/Edi;component/Images/App/Edit_Copy32.png" Height="32" SnapsToDevicePixels="True" />
+        </Button>
+        <Button Command="Cut" SnapsToDevicePixels="True"
+                ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}">
+          <Image Source="/Edi;component/Images/App/Edit_Cut32.png" Height="32" SnapsToDevicePixels="True" />
+        </Button>
+        <Button Command="Paste" SnapsToDevicePixels="True"
+                ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}">
+          <Image Source="/Edi;component/Images/App/Edit_Paste32.png" Height="32" SnapsToDevicePixels="True" />
+        </Button>
+        <Button Command="Delete" SnapsToDevicePixels="True"
+                ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}">
+          <Image Source="/Edi;component/Images/App/Edit_Delete32.png" Height="32"/>
+        </Button>
+        <Separator Margin="3"/>
+
+        <Button Command="Undo" SnapsToDevicePixels="True"
+              ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}">
+          <Image Source="/Edi;component/Images/App/Edit_Undo32.png" Height="32"/>
+        </Button>
+        <Button Command="Redo" SnapsToDevicePixels="True"
+              ToolTip="{Binding RelativeSource={RelativeSource Self}, Path=Command.Text}">
+          <Image Source="/Edi;component/Images/App/Edit_Redo32.png" Height="32"/>
+        </Button>
+      </ToolBar>
+    </ToolBarTray>
+
+      <avalonDock:DockingManager x:Name="dockManager" 
                                    AnchorablesSource="{Binding Tools}" 
                                    DocumentsSource="{Binding Files}"
                                    ActiveContent="{Binding ActiveDocument, Mode=TwoWay, Converter={StaticResource ActiveDocumentConverter}}"
-                                   Grid.Row="1">
-            <!-- avalonDock:DockingManager.Theme>
+                                   Grid.Row="2">
+      <avalonDock:DockingManager.DocumentHeaderTemplate>
+        <DataTemplate>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Title}" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+            <!-- Show IsReadOnly Icon in document tab if that properties' present and true -->
+            <Image Source="/Edi;component/Images/App/DocTab/Lock-icon.png"
+                   Margin="3,0,0,0"
+                   VerticalAlignment="Center">
+              <Image.Visibility>
+                <PriorityBinding FallbackValue="Collapsed" >
+                  <Binding Path="Content.IsReadOnly" Mode="OneWay" Converter="{StaticResource BoolToVisibilityConverter}" />
+                </PriorityBinding>
+              </Image.Visibility>
+              <Image.ToolTip>
+                <PriorityBinding FallbackValue="">
+                  <Binding Path="Content.IsReadOnlyReason" Mode="OneWay" />
+                </PriorityBinding>
+              </Image.ToolTip>
+            </Image>
+          </StackPanel>
+        </DataTemplate>
+      </avalonDock:DockingManager.DocumentHeaderTemplate>
+      <!-- avalonDock:DockingManager.Theme>
                 <avalonDock:AeroTheme/>
             </avalonDock:DockingManager.Theme -->
-            <avalonDock:DockingManager.LayoutItemTemplateSelector>
-               <pane:PanesTemplateSelector>
-                  <pane:PanesTemplateSelector.FileViewTemplate>
-                        <DataTemplate>
-                          <view:DocumentView />
-                        </DataTemplate>
-                  </pane:PanesTemplateSelector.FileViewTemplate>
-                <pane:PanesTemplateSelector.StartPageViewTemplate>
-                  <DataTemplate>
-                    <view:StartPage />
-                  </DataTemplate>
-                </pane:PanesTemplateSelector.StartPageViewTemplate>
-                  <pane:PanesTemplateSelector.RecentFilesViewTemplate>
-                    <DataTemplate>
-                      <view:RecentFilesView />
-                    </DataTemplate>
-                  </pane:PanesTemplateSelector.RecentFilesViewTemplate>
-                  <pane:PanesTemplateSelector.FileStatsViewTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding FileSize}"/>
-                                        <TextBlock Text="{Binding LastModified}"/>
-                                        <TextBox Text="test"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                  </pane:PanesTemplateSelector.FileStatsViewTemplate>
+      <avalonDock:DockingManager.LayoutItemTemplateSelector>
+        <pane:PanesTemplateSelector>
+          <pane:PanesTemplateSelector.FileViewTemplate>
+            <DataTemplate>
+              <avalonEdit:TextEditor Document="{Binding Document, UpdateSourceTrigger=PropertyChanged}"
+                                      SyntaxHighlighting="{Binding HighlightDef}"
+									                    IsModified="{Binding Path=IsDirty, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      IsReadOnly="{Binding IsReadOnly}"
+                                      >
+                <avalonEdit:TextEditor.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Command="Cut" Header="Cut">
+                      <MenuItem.Icon>
+                        <Image Source="/Edi;component/Images/App/Edit_Cut32.png" Height="16"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="Copy" Header="Copy">
+                      <MenuItem.Icon>
+                        <Image Source="/Edi;component/Images/App/Edit_Copy32.png" Height="16"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="Paste" Header="Paste">
+                      <MenuItem.Icon>
+                        <Image Source="/Edi;component/Images/App/Edit_Paste32.png" Height="16"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="Delete" Header="Delete">
+                      <MenuItem.Icon>
+                        <Image Source="/Edi;component/Images/App/Edit_Delete32.png" Height="16"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="Undo" Header="Undo">
+                      <MenuItem.Icon>
+                        <Image Source="/Edi;component/Images/App/Edit_Undo32.png" Height="16"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Command="Redo" Header="Redo">
+                      <MenuItem.Icon>
+                        <Image Source="/Edi;component/Images/App/Edit_Redo32.png" Height="16"/>
+                      </MenuItem.Icon>
+                    </MenuItem>
+                  </ContextMenu>
+                </avalonEdit:TextEditor.ContextMenu>
+              </avalonEdit:TextEditor>
+            </DataTemplate>
+          </pane:PanesTemplateSelector.FileViewTemplate>
+          <pane:PanesTemplateSelector.FileStatsViewTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding FileSize}"/>
+                <TextBlock Text="{Binding LastModified}"/>
+                <TextBox Text="test"/>
+              </StackPanel>
+            </DataTemplate>
+          </pane:PanesTemplateSelector.FileStatsViewTemplate>
         </pane:PanesTemplateSelector>
-            </avalonDock:DockingManager.LayoutItemTemplateSelector>
-            
-            <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+      </avalonDock:DockingManager.LayoutItemTemplateSelector>
+
+      <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
         <pane:PanesStyleSelector>
           <pane:PanesStyleSelector.ToolStyle>
             <Style TargetType="{x:Type avalonDock:LayoutAnchorableItem}">
-                <Setter Property="Title" Value="{Binding Model.Title}"/>
-                <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>
-                <Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"/>
-                <Setter Property="ContentId" Value="{Binding Model.ContentId}"/>
-                <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}"/>
-                <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}"/>
+              <Setter Property="Title" Value="{Binding Model.Title}"/>
+              <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>
+              <Setter Property="Visibility" Value="{Binding Model.IsVisible, Mode=TwoWay, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter={x:Static Visibility.Hidden}}"/>
+              <Setter Property="ContentId" Value="{Binding Model.ContentId}"/>
+              <Setter Property="IsSelected" Value="{Binding Model.IsSelected, Mode=TwoWay}"/>
+              <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}"/>
             </Style>
           </pane:PanesStyleSelector.ToolStyle>
-          <pane:PanesStyleSelector.StartPageStyle>
+          <pane:PanesStyleSelector.FileStyle>
             <Style TargetType="{x:Type avalonDock:LayoutItem}">
               <Setter Property="Title" Value="{Binding Model.Title}"/>
-              <Setter Property="ToolTip" Value="{Binding Model.StartPageTip}"/>
-              <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
-              <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>
-              <Setter Property="ContentId" Value="{Binding Model.ContentId}"/>
-            </Style>
-          </pane:PanesStyleSelector.StartPageStyle>
-          <pane:PanesStyleSelector.FileStyle>
-          <Style TargetType="{x:Type avalonDock:LayoutItem}">
-              <Setter Property="Title" Value="{Binding Model.Title}"/>
               <Setter Property="ToolTip" Value="{Binding Model.FilePath}"/>
               <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
               <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>
               <Setter Property="ContentId" Value="{Binding Model.ContentId}"/>
-          </Style>
+            </Style>
           </pane:PanesStyleSelector.FileStyle>
-          <pane:PanesStyleSelector.RecentFilesStyle>
-            <Style TargetType="{x:Type avalonDock:LayoutAnchorableItem}">
-              <Setter Property="Title" Value="{Binding Model.Title}"/>
-              <Setter Property="ToolTip" Value="{Binding Model.FilePath}"/>
-              <Setter Property="CloseCommand" Value="{Binding Model.CloseCommand}"/>
-              <Setter Property="IconSource" Value="{Binding Model.IconSource}"/>
-              <Setter Property="ContentId" Value="{Binding Model.ContentId}"/>
-            </Style>
-          </pane:PanesStyleSelector.RecentFilesStyle>
         </pane:PanesStyleSelector>
-            </avalonDock:DockingManager.LayoutItemContainerStyleSelector>
-            <avalonDock:DockingManager.LayoutUpdateStrategy>
+      </avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+      <avalonDock:DockingManager.LayoutUpdateStrategy>
         <pane:LayoutInitializer/>
-            </avalonDock:DockingManager.LayoutUpdateStrategy>
-            
-            <avalonDock:LayoutRoot>
-                <avalonDock:LayoutPanel Orientation="Vertical">
-                    <avalonDock:LayoutDocumentPane/>
-                    <avalonDock:LayoutAnchorablePane Name="ToolsPane" DockHeight="150">
-                    </avalonDock:LayoutAnchorablePane>
-                </avalonDock:LayoutPanel>
-            </avalonDock:LayoutRoot>
-        </avalonDock:DockingManager>
-    </Grid>
+      </avalonDock:DockingManager.LayoutUpdateStrategy>
+
+      <avalonDock:LayoutRoot>
+        <avalonDock:LayoutPanel Orientation="Vertical">
+          <avalonDock:LayoutDocumentPane/>
+          <avalonDock:LayoutAnchorablePane Name="ToolsPane" DockHeight="150">
+          </avalonDock:LayoutAnchorablePane>
+        </avalonDock:LayoutPanel>
+      </avalonDock:LayoutRoot>
+    </avalonDock:DockingManager>
+  </Grid>
 </Window>

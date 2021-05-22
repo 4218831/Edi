@@ -17,8 +17,6 @@
             InitializeComponent();
 
             this.DataContext = Workspace.This;
-
-            Workspace.This.InitCommandBinding(this);
         }
 
 

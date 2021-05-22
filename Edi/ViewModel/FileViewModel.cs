@@ -1,16 +1,34 @@
 ﻿namespace Edi.ViewModel
 {
   using System;
+  using System.Collections.Generic;
+  using System.Linq;
+  using System.Text;
   using System.IO;
   using System.Windows.Input;
+  using Microsoft.Win32;
+  using System.Windows;
+  using System.Windows.Media.Imaging;
+  using System.Windows.Media;
   using Edi.Command;
+  using ICSharpCode.AvalonEdit.Document;
+  using ICSharpCode.AvalonEdit.Utils;
+  using ICSharpCode.AvalonEdit.Highlighting;
 
-  class FileViewModel : Base.FileBaseViewModel
+  class FileViewModel : PaneViewModel
   {
+    #region fields
+    static ImageSourceConverter ISC = new ImageSourceConverter();
+    #endregion fields
+
+    #region fields
     public FileViewModel(string filePath)
     {
       FilePath = filePath;
       Title = FileName;
+
+      //Set the icon only for open documents (just a test)
+      IconSource = ISC.ConvertFromInvariantString(@"pack://application:,,/Images/document.png") as ImageSource;
     }
 
     public FileViewModel()
@@ -18,13 +36,14 @@
       IsDirty = true;
       Title = FileName;
     }
+    #endregion fields
 
     #region FilePath
     private string _filePath = null;
-    override public string FilePath
+    public string FilePath
     {
       get { return _filePath; }
-      protected set
+      set
       {
         if (_filePath != value)
         {
@@ -33,9 +52,29 @@
           RaisePropertyChanged("FileName");
           RaisePropertyChanged("Title");
 
-          if (File.Exists(_filePath))
+          if (File.Exists(this._filePath))
           {
-            _textContent = File.ReadAllText(_filePath);
+            this._document = new TextDocument();
+            this.HighlightDef = HighlightingManager.Instance.GetDefinition("XML");
+            this._isDirty = false;
+            this.IsReadOnly = false;
+
+            // Check file attributes and set to read-only if file attributes indicate that
+            if ((System.IO.File.GetAttributes(this._filePath) & FileAttributes.ReadOnly) != 0)
+            {
+              this.IsReadOnly = true;
+              this.IsReadOnlyReason = "This file cannot be edit because another process is currently writting to it.\n" +
+                                      "Change the file access permissions or save the file in a different location if you want to edit it.";
+            }
+
+            using (FileStream fs = new FileStream(this._filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+              using (StreamReader reader = FileReader.OpenStream(fs, Encoding.UTF8))
+              {
+                this._document = new TextDocument(reader.ReadToEnd());
+              }
+            }
+
             ContentId = _filePath;
           }
         }
@@ -43,6 +82,7 @@
     }
     #endregion
 
+    #region FileName
     public string FileName
     {
       get
@@ -53,19 +93,20 @@
         return System.IO.Path.GetFileName(FilePath) + (IsDirty ? "*" : "");
       }
     }
+    #endregion FileName
 
     #region TextContent
 
-    private string _textContent = string.Empty;
-    public string TextContent
+    private TextDocument _document = null;
+    public TextDocument Document
     {
-      get { return _textContent; }
+      get { return this._document; }
       set
       {
-        if (_textContent != value)
+        if (this._document != value)
         {
-          _textContent = value;
-          RaisePropertyChanged("TextContent");
+          this._document = value;
+          RaisePropertyChanged("Document");
           IsDirty = true;
         }
       }
@@ -73,10 +114,47 @@
 
     #endregion
 
+    #region HighlightingDefinition
+
+    private IHighlightingDefinition _highlightdef = null;
+    public IHighlightingDefinition HighlightDef
+    {
+      get { return this._highlightdef; }
+      set
+      {
+        if (this._highlightdef != value)
+        {
+          this._highlightdef = value;
+          RaisePropertyChanged("HighlightDef");
+          IsDirty = true;
+        }
+      }
+    }
+
+    #endregion
+
+    #region Title
+    /// <summary>
+    /// Title is the string that is usually displayed - with or without dirty mark '*' - in the docking environment
+    /// </summary>
+    public string Title
+    {
+      get
+      {
+        return System.IO.Path.GetFileName(this.FilePath) + (this.IsDirty == true ? "*" : string.Empty);
+      }
+
+      set
+      {
+        base.Title = value;
+      }
+    }
+    #endregion
+
     #region IsDirty
 
     private bool _isDirty = false;
-    override public bool IsDirty
+    public bool IsDirty
     {
       get { return _isDirty; }
       set
@@ -85,6 +163,7 @@
         {
           _isDirty = value;
           RaisePropertyChanged("IsDirty");
+          RaisePropertyChanged("Title");
           RaisePropertyChanged("FileName");
         }
       }
@@ -92,9 +171,47 @@
 
     #endregion
 
+    #region IsReadOnly
+    private bool mIsReadOnly = false;
+    public bool IsReadOnly
+    {
+      get
+      {
+        return this.mIsReadOnly;
+      }
+
+      protected set
+      {
+        if (this.mIsReadOnly != value)
+        {
+          this.mIsReadOnly = value;
+          this.RaisePropertyChanged("IsReadOnly");
+        }
+      }
+    }
+
+    private string mIsReadOnlyReason = string.Empty;
+    public string IsReadOnlyReason
+    {
+      get
+      {
+        return this.mIsReadOnlyReason;
+      }
+
+      protected set
+      {
+        if (this.mIsReadOnlyReason != value)
+        {
+          this.mIsReadOnlyReason = value;
+          this.RaisePropertyChanged("IsReadOnlyReason");
+        }
+      }
+    }
+    #endregion IsReadOnly
+
     #region SaveCommand
     RelayCommand _saveCommand = null;
-    override public ICommand SaveCommand
+    public ICommand SaveCommand
     {
       get
       {
@@ -107,7 +224,7 @@
       }
     }
 
-    public bool CanSave(object parameter)
+    private bool CanSave(object parameter)
     {
       return IsDirty;
     }
@@ -148,7 +265,7 @@
 
     #region CloseCommand
     RelayCommand _closeCommand = null;
-    override public ICommand CloseCommand
+    public ICommand CloseCommand
     {
       get
       {
@@ -172,18 +289,5 @@
     }
     #endregion
 
-    public override Uri IconSource
-    {
-      get
-      {
-        // This icon is visible in AvalonDock's Document Navigator window
-        return new Uri("pack://application:,,,/Edi;component/Images/document.png", UriKind.RelativeOrAbsolute);
-      }
-    }
-
-    public void SetFileName(string f)
-    {
-      this._filePath = f;
-    }
   }
 }

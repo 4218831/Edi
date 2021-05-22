@@ -15,29 +15,30 @@
     {
       Workspace.This.ActiveDocumentChanged += new EventHandler(OnActiveDocumentChanged);
       ContentId = ToolContentId;
+
+      BitmapImage bi = new BitmapImage();
+      bi.BeginInit();
+      bi.UriSource = new Uri("pack://application:,,/Images/property-blue.png");
+      bi.EndInit();
+      IconSource = bi;
     }
 
     public const string ToolContentId = "FileStatsTool";
 
     void OnActiveDocumentChanged(object sender, EventArgs e)
     {
-      FileSize = 0;
-      LastModified = DateTime.MinValue;
-
-      if (Workspace.This.ActiveDocument != null)
+      if (Workspace.This.ActiveDocument != null &&
+          Workspace.This.ActiveDocument.FilePath != null &&
+          File.Exists(Workspace.This.ActiveDocument.FilePath))
       {
-        FileViewModel f = Workspace.This.ActiveDocument as FileViewModel;
-
-        if (f != null)
-        {
-          if (f.FilePath != null && File.Exists(f.FilePath))
-          {
-            var fi = new FileInfo(f.FilePath);
-            FileSize = fi.Length;
-            LastModified = fi.LastWriteTime;
-          }
-
-        }
+        var fi = new FileInfo(Workspace.This.ActiveDocument.FilePath);
+        FileSize = fi.Length;
+        LastModified = fi.LastWriteTime;
+      }
+      else
+      {
+        FileSize = 0;
+        LastModified = DateTime.MinValue;
       }
     }
 
@@ -77,12 +78,8 @@
 
     #endregion
 
-    public override Uri IconSource
-    {
-      get
-      {
-        return new Uri("pack://application:,,,/Edi;component/Images/property-blue.png", UriKind.RelativeOrAbsolute);
-      }
-    }
+
+
+
   }
 }

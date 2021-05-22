@@ -6,7 +6,7 @@
   using System.Text;
   using System.Windows.Media;
 
-  internal class PaneViewModel : Base.ViewModelBase
+  class PaneViewModel : Base.ViewModelBase
   {
     public PaneViewModel()
     { }
@@ -30,10 +30,9 @@
 
     #endregion
 
-    public virtual Uri IconSource
+    public ImageSource IconSource
     {
       get;
-
       protected set;
     }
 
